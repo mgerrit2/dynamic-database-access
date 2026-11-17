@@ -1,20 +1,15 @@
 package com.example.dynamicAccess.DynamicDatabaseAccess.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.autoconfigure.DataSourceProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 
-import javax.sql.DataSource;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +22,7 @@ public class DatabaseRefreshConfig {
     private final ContextRefresher contextRefresher;
     private final ApplicationEventPublisher eventPublisher; // <-- Nodig om de wijziging door te geven
 
+    /* only working in config server(not save in github)
     @Bean
     @Primary
     @RefreshScope
@@ -41,6 +37,7 @@ public class DatabaseRefreshConfig {
     public DataSource dataSource(DataSourceProperties properties) {
         return properties.initializeDataSourceBuilder().build();
     }
+*/
 
     /**
      * Dynamically updates the database credentials in memory, notifies the Spring
@@ -59,6 +56,7 @@ public class DatabaseRefreshConfig {
         if (sources.contains("dynamic-db-source")) {
             // Update de bestaande property source
             MapPropertySource ps = (MapPropertySource) sources.get("dynamic-db-source");
+            assert ps != null;
             ps.getSource().putAll(dynamicProps);
         } else {
             sources.addFirst(new MapPropertySource("dynamic-db-source", dynamicProps));
