@@ -13,6 +13,7 @@ import java.util.Properties;
 /**
  * Utility component for reading from and writing to properties files located
  * within the Spring application's classpath using the Spring {@link ApplicationContext}.
+ * remarks: not needed use /update-credentials
  */
 @RequiredArgsConstructor
 @Component
