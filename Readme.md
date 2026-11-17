@@ -1,8 +1,8 @@
 ### Purpose to demonstrate dynamic datasource access
 - If the datasource is disconnected, run springboot anyway.
-- Connect to more datasource at the same time.
 - Restart and shutdown springboot with jvm stays alive from controller
 - Dynamically updates the database credentials
+- Set server in maintenance mode
 
 ## Refresh property with controller(Dynamically updates the database credentials)
 
@@ -171,61 +171,6 @@ public class DatabaseRefreshConfig {
 }
 ```
 
-## Refresh properties
-
-
-The dependency to add 
-``` groovy
-implementation 'org.springframework.boot:spring-boot-starter-actuator'
-implementation 'org.springframework.cloud:spring-cloud-context:5.0.3'
-```
-
-The properties file to insert
-``` properties
-#######################################################################
-# actuators
-#######################################################################
-# Expose health and refresh endpoints over web
-management.endpoints.web.exposure.include=health,refresh,info
-
-# Explicitly enable the refresh endpoint (if required)
-management.endpoint.refresh.enabled=true
-```
-
-
-## temp
-<div>
-<a href="https://stackoverflow.com/questions/57224715/dynamic-datasource-using-springboot">
-Dynamic Datasource using SpringBoot [duplicate]
-</a>
-</div>
-
-
-
-## Datasource dynamicaly
-<a href="https://www.baeldung.com/spring-boot-configure-data-source-programmatic">
-https://www.baeldung.com/spring-boot-configure-data-source-programmatic
-</a>
-
-## Restart
-<a href="https://www.baeldung.com/java-restart-spring-boot-app">
-Programmatically Restarting a Spring Boot Application
-</a>
-
-
-## Reloading Properties Files in
-<a href="https://www.baeldung.com/spring-reloading-properties#:~:text=To%20change%20properties%20in%20a,%2F%7Bpath%20to%20file%7D.">
-Reloading Properties Files in
-</a>
-
-## Run deamon in sprinboot
-<a href="https://stackoverflow.com/questions/40941845/how-to-start-and-eventually-stop-a-daemon-thread-in-spring-boot">
-Run deamon in sprinboot
-</a>
-
-## Enable disable endpoints(stop request)
-<a href="https://www.baeldung.com/spring-boot-enable-disable-endpoints-at-runtime">Enable and Disable Endpoints at Runtime With Spring Boot</a>
-
 
 
 ## Stop request
@@ -237,14 +182,6 @@ Run deamon in sprinboot
 ## Scheduler
 <a href="https://stackoverflow.com/questions/35169161/scheduler-not-running-in-spring-boot">Configuring a Hikari Connection</a>
 
-
-## make sqlserver user
-
-<a href="https://www.youtube.com/watch?v=dJ6c3OgIVDM">Make sqlserver user video</a>
-
-userid:DynamicDatabaseAccess
-
-password:DynamicDatabaseAccessAdmin
 
 
 ## Swagger
