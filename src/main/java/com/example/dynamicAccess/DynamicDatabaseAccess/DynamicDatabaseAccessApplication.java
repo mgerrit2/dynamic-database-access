@@ -29,7 +29,8 @@ public class DynamicDatabaseAccessApplication {
 
 	/**
 	 * Safely closes the active Spring IoC container,
-	 * stopping all managed beans, database connections, and scheduled tasks g
+	 * stopping all managed beans, database connections, and scheduled tasks
+	 * remarks: not needed use /update-credentials
 	 */
 	public static void shutdown() {
 		if (context.isActive()) {
@@ -40,6 +41,7 @@ public class DynamicDatabaseAccessApplication {
 	/**
 	 * Programmatically
 	 * restarts the entire Spring Boot application without killing the host JVM process.
+	 * remarks: not needed use /update-credentials
 	 */
 	public static void restart() {
 
