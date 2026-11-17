@@ -1,0 +1,121 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.0.5'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'checkstyle'
+	id 'com.github.spotbugs' version '6.4.8' // Check plugin portal for the latest version
+	id 'pmd'
+}
+
+group = 'com.example.dynamicAccess'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+
+	}
+}
+
+
+configurations.all {
+	resolutionStrategy.eachDependency { details ->
+		if (details.requested.group.startsWith('com.fasterxml.jackson')) {
+			if (details.requested.name == 'jackson-annotations') {
+				details.useVersion '2.21'
+			} else {
+				details.useVersion '2.21.8'
+			}
+			details.because('Mitigates CVE-2026-110879 and aligns all Jackson modules to 2.21.8')
+		}
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.cloud:spring-cloud-context:5.0.3'
+
+	// liquibase
+	implementation 'org.springframework.boot:spring-boot-starter-liquibase'
+
+	// Utilities
+	implementation("org.apache.commons:commons-lang3:3.21.0")
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// springboot hot reload
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+
+	// postgreSQL
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// openapi 3.0
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
+
+	// MapStruct
+	implementation 'org.mapstruct:mapstruct:1.6.3' // or latest stable version
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+	// Make sure Lombok annotation processor comes AFTER or alongside MapStruct processor
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.liquibase:liquibase-core'
+	testImplementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+/**
+ * Best for enforcing team formatting & style
+ * You can find the commands under verification
+ * S
+ */
+checkstyle {
+	toolVersion = '10.24.0' // Use your preferred Checkstyle version
+	configFile = file("${rootDir}/config/checkstyle/checkstyle.xml") // Optional custom path
+	ignoreFailures = false // Set to true if you only want warnings without failing the build
+	maxWarnings = 0
+}
+
+spotbugs {
+	toolVersion = '4.9.8'
+	ignoreFailures = false
+	effort = 'max' // min, default, or max
+	reportLevel = 'medium' // low, medium, or high
+}
+
+spotbugsMain {
+	ignoreFailures = true
+}
+
+// Optional: Configure reports to generate HTML instead of just XML
+tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
+	reports {
+		html {
+			required = true
+			outputLocation = file("$buildDir/reports/spotbugs/main.html")
+		}
+	}
+}
+
+pmd {
+	toolVersion = '7.16.0'
+	ruleSets = ['category/java/errorprone.xml', 'category/java/bestpractices.xml']
+	ignoreFailures = false
+}
