@@ -460,7 +460,6 @@ scrape_configs:
     - targets: ['localhost:8080']
 ```
 
-
 ### Links prometeus
 > [Raw prometheus](http://localhost:8080/actuator/prometheus)
 >
@@ -470,16 +469,14 @@ scrape_configs:
 ### Grafana UI
 [Grafana UI](http://localhost:3000)
  
-
-## Scheduler
-<a href="https://stackoverflow.com/questions/35169161/scheduler-not-running-in-spring-boot">Configuring a Hikari Connection</a>
-
-
-
 ## Swagger
-http://localhost:8080/swagger-ui/index.html
+[swagger](http://localhost:8080/swagger-ui/index.html)
 
 ## actuators
-http://localhost:8080/actuator/health
-http://localhost:8080/actuator/info
-http://localhost:8080/actuator/refresh
+[health](http://localhost:8080/actuator/health)
+
+[info](http://localhost:8080/actuator/info)
+
+[refresh](http://localhost:8080/actuator/refresh)
+
+
