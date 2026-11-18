@@ -429,10 +429,47 @@ spring.datasource.hikari.leak-detection-threshold=0
 
 ## Monitoring Hikari
 
+### Implementation in gradle
+``` groovy
+// Micrometer Prometheus use for monitoring
+implementation 'io.micrometer:micrometer-registry-prometheus'
+```
+
+### Settings in de properties file
+``` properties
+#######################################################################
+# actuators
+#######################################################################
+# Expose health,refresh and prometheus endpoints over web
+management.endpoints.web.exposure.include=health,refresh,info,prometheus
+
+#######################################################################
+# prometheus
+##################################################################
+management.endpoint.prometheus.enabled=true
+```
+
+### Aad file prometheus.yml
+
+``` yml
+scrape_configs:
+- job_name: 'dynamic-database-access'
+  metrics_path: '/actuator/prometheus'
+  scrape_interval: 5s
+  static_configs:
+    - targets: ['localhost:8080']
+```
 
 
-## Hikori datasource
-<a href="https://www.baeldung.com/spring-boot-hikari#:~:text=Hikari%20is%20a%20JDBC%20DataSource,to%20Hikari%2C%20see%20this%20article.">Configuring a Hikari Connection</a>
+### Links prometeus
+> [Raw prometheus](http://localhost:8080/actuator/prometheus)
+>
+> [Prometheus UI](http://localhost:9090)
+
+## Grafana
+### Grafana UI
+[Grafana UI](http://localhost:3000)
+ 
 
 ## Scheduler
 <a href="https://stackoverflow.com/questions/35169161/scheduler-not-running-in-spring-boot">Configuring a Hikari Connection</a>
