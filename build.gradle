@@ -63,6 +63,9 @@ dependencies {
 	// openapi 3.0
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
 
+	// Micrometer Prometheus use for monitoring
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+
 	// MapStruct
 	implementation 'org.mapstruct:mapstruct:1.6.3' // or latest stable version
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
