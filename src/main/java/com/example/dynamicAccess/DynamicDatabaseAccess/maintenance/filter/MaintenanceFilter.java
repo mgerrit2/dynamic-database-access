@@ -23,7 +23,12 @@ public class MaintenanceFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // 1. Always allow health checks, actuator, and the admin maintenance toggle endpoints!
-        if (path.startsWith("/actuator/") || path.startsWith("/api/v1/admin/maintenance")) {
+        if (
+                path.startsWith("/actuator/") ||
+                path.startsWith("/api/v1/admin/maintenance") ||
+                path.startsWith("/swagger-ui") ||
+                path.startsWith("/v3/api-docs")
+        ) {
             filterChain.doFilter(request, response);
             return;
         }
