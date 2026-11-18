@@ -12,12 +12,5 @@ services:
       - POSTGRES_HOST_AUTH_METHOD=trust # Hiermee voorkom je de pg_hba.conf fout lokaal
     ports:
       - "5433:5432"
-
-  grafana-lgtm:
-      image: 'grafana/otel-lgtm:latest'
-      ports:
-      - '3000:3000' # Access Grafana Web UI
-      - '4317:4317' # Access OTLP gRPC Ingestion
-      - '4318:4318' # Access OTLP
 volumes:
   postgres_data:
