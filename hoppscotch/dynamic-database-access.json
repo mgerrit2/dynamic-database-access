@@ -1,0 +1,215 @@
+{
+  "v": 11,
+  "name": "dynamic-database-access",
+  "folders": [
+    {
+      "v": 11,
+      "name": "maintenance",
+      "folders": [],
+      "requests": [
+        {
+          "v": "17",
+          "name": "enable",
+          "method": "POST",
+          "endpoint": "http://localhost:8080/api/v1/admin/maintenance/enable",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "// 1. Check if we actually have a response body\r\nif (!pw.response.body) {\r\n    console.error(\"No response body found!\");\r\n} else {\r\n    try {\r\n        //const resp = JSON.parse(pw.response.body);\r\n        \r\n        // 2. Check if the token is actually there\r\n        if (pw.response.body && pw.response.body.access_token) {\r\n            pw.env.set(\"bearerToken\", pw.response.body.access_token);\r\n            console.log(\"Token updated!\");\r\n        } else {\r\n            console.log(\"JSON received, but no access_token found.\");\r\n        }\r\n    } catch (e) {\r\n        console.error(\"Failed to parse JSON: \" + e.message);\r\n    }\r\n}\r\n\r\n// 3. Simple test that SHOULD always show up\r\npw.test(\"Script check\", () => {\r\n    pw.expect(pw.response.status).toBe(200);\r\n});",
+          "auth": {
+            "authType": "none",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/x-www-form-urlencoded",
+            "body": ""
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "status",
+          "method": "GET",
+          "endpoint": "http://localhost:8080/api/v1/admin/maintenance/status",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "// 1. Check if we actually have a response body\r\nif (!pw.response.body) {\r\n    console.error(\"No response body found!\");\r\n} else {\r\n    try {\r\n        //const resp = JSON.parse(pw.response.body);\r\n        \r\n        // 2. Check if the token is actually there\r\n        if (pw.response.body && pw.response.body.access_token) {\r\n            pw.env.set(\"bearerToken\", pw.response.body.access_token);\r\n            console.log(\"Token updated!\");\r\n        } else {\r\n            console.log(\"JSON received, but no access_token found.\");\r\n        }\r\n    } catch (e) {\r\n        console.error(\"Failed to parse JSON: \" + e.message);\r\n    }\r\n}\r\n\r\n// 3. Simple test that SHOULD always show up\r\npw.test(\"Script check\", () => {\r\n    pw.expect(pw.response.status).toBe(200);\r\n});",
+          "auth": {
+            "authType": "none",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/x-www-form-urlencoded",
+            "body": ""
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "disable",
+          "method": "POST",
+          "endpoint": "http://localhost:8080/api/v1/admin/maintenance/disable",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "// 1. Check if we actually have a response body\r\nif (!pw.response.body) {\r\n    console.error(\"No response body found!\");\r\n} else {\r\n    try {\r\n        //const resp = JSON.parse(pw.response.body);\r\n        \r\n        // 2. Check if the token is actually there\r\n        if (pw.response.body && pw.response.body.access_token) {\r\n            pw.env.set(\"bearerToken\", pw.response.body.access_token);\r\n            console.log(\"Token updated!\");\r\n        } else {\r\n            console.log(\"JSON received, but no access_token found.\");\r\n        }\r\n    } catch (e) {\r\n        console.error(\"Failed to parse JSON: \" + e.message);\r\n    }\r\n}\r\n\r\n// 3. Simple test that SHOULD always show up\r\npw.test(\"Script check\", () => {\r\n    pw.expect(pw.response.status).toBe(200);\r\n});",
+          "auth": {
+            "authType": "none",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/x-www-form-urlencoded",
+            "body": ""
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ],
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "headers": [],
+      "variables": [],
+      "description": null
+    }
+  ],
+  "requests": [
+    {
+      "v": "17",
+      "name": "getPersons",
+      "method": "GET",
+      "endpoint": "http://localhost:8080/api/v1",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "// 1. Check if we actually have a response body\r\nif (!pw.response.body) {\r\n    console.error(\"No response body found!\");\r\n} else {\r\n    try {\r\n        //const resp = JSON.parse(pw.response.body);\r\n        \r\n        // 2. Check if the token is actually there\r\n        if (pw.response.body && pw.response.body.access_token) {\r\n            pw.env.set(\"bearerToken\", pw.response.body.access_token);\r\n            console.log(\"Token updated!\");\r\n        } else {\r\n            console.log(\"JSON received, but no access_token found.\");\r\n        }\r\n    } catch (e) {\r\n        console.error(\"Failed to parse JSON: \" + e.message);\r\n    }\r\n}\r\n\r\n// 3. Simple test that SHOULD always show up\r\npw.test(\"Script check\", () => {\r\n    pw.expect(pw.response.status).toBe(200);\r\n});",
+      "auth": {
+        "authType": "bearer",
+        "token": "<<bearerToken>>",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/x-www-form-urlencoded",
+        "body": ""
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": null
+    },
+    {
+      "v": "17",
+      "name": "restart",
+      "method": "POST",
+      "endpoint": "http://localhost:8080/api/v1/DynamicProperty/restart",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "// 1. Check if we actually have a response body\r\nif (!pw.response.body) {\r\n    console.error(\"No response body found!\");\r\n} else {\r\n    try {\r\n        //const resp = JSON.parse(pw.response.body);\r\n        \r\n        // 2. Check if the token is actually there\r\n        if (pw.response.body && pw.response.body.access_token) {\r\n            pw.env.set(\"bearerToken\", pw.response.body.access_token);\r\n            console.log(\"Token updated!\");\r\n        } else {\r\n            console.log(\"JSON received, but no access_token found.\");\r\n        }\r\n    } catch (e) {\r\n        console.error(\"Failed to parse JSON: \" + e.message);\r\n    }\r\n}\r\n\r\n// 3. Simple test that SHOULD always show up\r\npw.test(\"Script check\", () => {\r\n    pw.expect(pw.response.status).toBe(200);\r\n});",
+      "auth": {
+        "authType": "bearer",
+        "token": "<<bearerToken>>",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/x-www-form-urlencoded",
+        "body": ""
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": null
+    },
+    {
+      "v": "17",
+      "name": "shutdown",
+      "method": "POST",
+      "endpoint": "http://localhost:8080/api/v1/DynamicProperty/shutdown",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "// 1. Check if we actually have a response body\r\nif (!pw.response.body) {\r\n    console.error(\"No response body found!\");\r\n} else {\r\n    try {\r\n        //const resp = JSON.parse(pw.response.body);\r\n        \r\n        // 2. Check if the token is actually there\r\n        if (pw.response.body && pw.response.body.access_token) {\r\n            pw.env.set(\"bearerToken\", pw.response.body.access_token);\r\n            console.log(\"Token updated!\");\r\n        } else {\r\n            console.log(\"JSON received, but no access_token found.\");\r\n        }\r\n    } catch (e) {\r\n        console.error(\"Failed to parse JSON: \" + e.message);\r\n    }\r\n}\r\n\r\n// 3. Simple test that SHOULD always show up\r\npw.test(\"Script check\", () => {\r\n    pw.expect(pw.response.status).toBe(200);\r\n});",
+      "auth": {
+        "authType": "bearer",
+        "token": "<<bearerToken>>",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/x-www-form-urlencoded",
+        "body": ""
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": null
+    },
+    {
+      "v": "17",
+      "name": "getpropertys",
+      "method": "GET",
+      "endpoint": "http://localhost:8080/api/v1/DynamicProperty/getpropertys",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "// 1. Check if we actually have a response body\r\nif (!pw.response.body) {\r\n    console.error(\"No response body found!\");\r\n} else {\r\n    try {\r\n        //const resp = JSON.parse(pw.response.body);\r\n        \r\n        // 2. Check if the token is actually there\r\n        if (pw.response.body && pw.response.body.access_token) {\r\n            pw.env.set(\"bearerToken\", pw.response.body.access_token);\r\n            console.log(\"Token updated!\");\r\n        } else {\r\n            console.log(\"JSON received, but no access_token found.\");\r\n        }\r\n    } catch (e) {\r\n        console.error(\"Failed to parse JSON: \" + e.message);\r\n    }\r\n}\r\n\r\n// 3. Simple test that SHOULD always show up\r\npw.test(\"Script check\", () => {\r\n    pw.expect(pw.response.status).toBe(200);\r\n});",
+      "auth": {
+        "authType": "bearer",
+        "token": "<<bearerToken>>",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/x-www-form-urlencoded",
+        "body": ""
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": null
+    },
+    {
+      "v": "17",
+      "name": "update-credentials",
+      "method": "POST",
+      "endpoint": "http://localhost:8080/api/v1/DynamicProperty/update-credentials",
+      "params": [
+        {
+          "key": "username",
+          "value": "user",
+          "active": true,
+          "description": ""
+        },
+        {
+          "key": "password",
+          "value": "password",
+          "active": true,
+          "description": ""
+        }
+      ],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "// 1. Check if we actually have a response body\r\nif (!pw.response.body) {\r\n    console.error(\"No response body found!\");\r\n} else {\r\n    try {\r\n        //const resp = JSON.parse(pw.response.body);\r\n        \r\n        // 2. Check if the token is actually there\r\n        if (pw.response.body && pw.response.body.access_token) {\r\n            pw.env.set(\"bearerToken\", pw.response.body.access_token);\r\n            console.log(\"Token updated!\");\r\n        } else {\r\n            console.log(\"JSON received, but no access_token found.\");\r\n        }\r\n    } catch (e) {\r\n        console.error(\"Failed to parse JSON: \" + e.message);\r\n    }\r\n}\r\n\r\n// 3. Simple test that SHOULD always show up\r\npw.test(\"Script check\", () => {\r\n    pw.expect(pw.response.status).toBe(200);\r\n});",
+      "auth": {
+        "authType": "bearer",
+        "token": "<<bearerToken>>",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/x-www-form-urlencoded",
+        "body": ""
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": null
+    }
+  ],
+  "auth": {
+    "authType": "none",
+    "authActive": true
+  },
+  "headers": [],
+  "variables": [],
+  "description": ""
+}
