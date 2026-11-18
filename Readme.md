@@ -105,7 +105,7 @@ public class DynamicProperty {
     }
 }
 ```
-### the configuration
+### The configuration
 ``` java
 package com.example.dynamicAccess.DynamicDatabaseAccess.config;
 
@@ -171,7 +171,231 @@ public class DatabaseRefreshConfig {
 }
 ```
 
+## Maintenance of the database
+### The controller
+``` java
+package com.example.dynamicAccess.DynamicDatabaseAccess.maintenance.controller;
 
+import com.example.dynamicAccess.DynamicDatabaseAccess.maintenance.service.MaintenanceService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+@RestController
+@RequestMapping("/api/v1/admin/maintenance")
+@RequiredArgsConstructor
+@Tag(name = "Maintenance Controller", description = "Beheer van de applicatie onderhoudsmodus")
+public class MaintenanceController {
+
+    private final MaintenanceService maintenanceService;
+
+
+    @Operation(summary = "Enable maintenance ",responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @io.swagger.v3.oas.annotations.media.Content(
+                            array = @ArraySchema(schema = @Schema(implementation = String.class))
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "4XX", // Catches 400, 401, 403, 404, etc.
+                    description = "Client Error (e.g., Bad Request, Unauthorized, Not Found, Validation)",
+                    content = @Content(
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = ProblemDetail.class
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "default",
+                    description = "Unexpected Error",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = ProblemDetail.class
+                            )
+                    )
+            )
+    })
+    @PostMapping("/enable")
+    public ResponseEntity<String> enableMaintenance() {
+        maintenanceService.setEnabled(true);
+        return ResponseEntity.ok("Maintenance mode ENABLED. All traffic is now blocked.");
+    }
+
+    @Operation(summary = "Disable maintenance ",responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @io.swagger.v3.oas.annotations.media.Content(
+                            array = @ArraySchema(schema = @Schema(implementation = String.class))
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "4XX", // Catches 400, 401, 403, 404, etc.
+                    description = "Client Error (e.g., Bad Request, Unauthorized, Not Found, Validation)",
+                    content = @Content(
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = ProblemDetail.class
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "default",
+                    description = "Unexpected Error",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = ProblemDetail.class
+                            )
+                    )
+            )
+    })
+    @PostMapping("/disable")
+    public ResponseEntity<String> disableMaintenance() {
+        maintenanceService.setEnabled(false);
+        return ResponseEntity.ok("Maintenance mode DISABLED. Normal traffic resumed.");
+    }
+
+
+    @Operation(summary = "Status maintenance ",responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @io.swagger.v3.oas.annotations.media.Content(
+                            array = @ArraySchema(schema = @Schema(implementation = String.class))
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "4XX", // Catches 400, 401, 403, 404, etc.
+                    description = "Client Error (e.g., Bad Request, Unauthorized, Not Found, Validation)",
+                    content = @Content(
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = ProblemDetail.class
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "default",
+                    description = "Unexpected Error",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = ProblemDetail.class
+                            )
+                    )
+            )
+    })
+    @GetMapping("/status")
+    public ResponseEntity<String> getStatus() {
+        boolean active = maintenanceService.isEnabled();
+        return ResponseEntity.ok("Maintenance mode is currently: " + (active ? "ACTIVE" : "INACTIVE"));
+    }
+}
+```
+
+### The services
+``` java
+package com.example.dynamicAccess.DynamicDatabaseAccess.maintenance.service;
+
+import org.springframework.stereotype.Service;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+@Service
+public class MaintenanceService {
+
+    private final AtomicBoolean maintenanceMode = new AtomicBoolean(false);
+
+    public boolean isEnabled() {
+        return maintenanceMode.get();
+    }
+
+    public void setEnabled(boolean enabled) {
+        maintenanceMode.set(enabled);
+    }
+}
+```
+
+### The HTTP filter
+``` java
+package com.example.dynamicAccess.DynamicDatabaseAccess.maintenance.filter;
+
+import com.example.dynamicAccess.DynamicDatabaseAccess.maintenance.service.MaintenanceService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+@RequiredArgsConstructor
+public class MaintenanceFilter extends OncePerRequestFilter {
+
+    private final MaintenanceService maintenanceService;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+
+        // 1. Always allow health checks, actuator, and the admin maintenance toggle endpoints!
+        if (
+                path.startsWith("/actuator/") ||
+                path.startsWith("/api/v1/admin/maintenance") ||
+                path.startsWith("/swagger-ui") ||
+                path.startsWith("/v3/api-docs")
+        ) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 2. Check if maintenance mode is active
+        if (maintenanceService.isEnabled()) {
+            response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"System is under maintenance. Please try again later.\"}");
+            return;
+        }
+
+        // 3. Normal flow
+        filterChain.doFilter(request, response);
+    }
+}
+```
 
 ## Stop request
 <a href="https://www.appsloveworld.com/springmvc/100/11/how-do-i-prevent-a-spring-boot-webapplication-from-accepting-http-requests-while?utm_content=cmp-true">HOW DO I PREVENT A SPRING BOOT WEBAPPLICATION FROM ACCEPTING HTTP REQUESTS WHILE IT IS STILL STARTING UP</a>
