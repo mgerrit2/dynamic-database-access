@@ -1,4 +1,4 @@
-### Purpose to demonstrate dynamic datasource access
+# Purpose to demonstrate dynamic datasource access
 - If the datasource is disconnected, run springboot anyway.
 - Restart and shutdown springboot with jvm stays alive from controller
 - Dynamically updates the database credentials
@@ -172,6 +172,9 @@ public class DatabaseRefreshConfig {
 ```
 
 ## Maintenance of the database
+## Overview
+![dynamic-database-access-maintenance.jpg](image/dynamic-database-access-maintenance.jpg)
+
 ### The controller
 ``` java
 package com.example.dynamicAccess.DynamicDatabaseAccess.maintenance.controller;
@@ -397,8 +400,36 @@ public class MaintenanceFilter extends OncePerRequestFilter {
 }
 ```
 
-## Stop request
-<a href="https://www.appsloveworld.com/springmvc/100/11/how-do-i-prevent-a-spring-boot-webapplication-from-accepting-http-requests-while?utm_content=cmp-true">HOW DO I PREVENT A SPRING BOOT WEBAPPLICATION FROM ACCEPTING HTTP REQUESTS WHILE IT IS STILL STARTING UP</a>
+## Prevent that Hikari not startup,with broken database connection
+
+``` properties
+spring.datasource.hikari.initialization-fail-timeout=-1
+```
+
+## configuration hikari
+``` properties
+# Maximum number of actual active and idle connections in the pool (Default: 10)
+spring.datasource.hikari.maximum-pool-size=10
+
+# Minimum number of idle connections that HikariCP tries to maintain (Default: same as maximumPoolSize)
+spring.datasource.hikari.minimum-idle=10
+
+# Maximum time (in ms) to wait for a connection from the pool before throwing an exception (30 seconds)
+spring.datasource.hikari.connection-timeout=30000
+
+# Maximum time (in ms) a connection can sit idle in the pool before being closed (10 minutes)
+spring.datasource.hikari.idle-timeout=600000
+
+# Maximum lifetime (in ms) of a connection in the pool regardless of use (30 minutes)
+spring.datasource.hikari.max-lifetime=1800000
+
+# Threshold (in ms) to log a warning if a connection is checked out too long (0 = disabled)
+spring.datasource.hikari.leak-detection-threshold=0
+```
+
+## Monitoring Hikari
+
+
 
 ## Hikori datasource
 <a href="https://www.baeldung.com/spring-boot-hikari#:~:text=Hikari%20is%20a%20JDBC%20DataSource,to%20Hikari%2C%20see%20this%20article.">Configuring a Hikari Connection</a>
