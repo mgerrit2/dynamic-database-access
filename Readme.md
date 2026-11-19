@@ -2,7 +2,8 @@
 - If the datasource is disconnected, run springboot anyway.
 - Restart and shutdown springboot with jvm stays alive from controller
 - Dynamically updates the database credentials
-- Set server in maintenance mode
+- Set server in maintenance mode, and return 503 Service Unavailable
+- Show also the use of prometheus
 
 ## Refresh property with controller(Dynamically updates the database credentials)
 
@@ -427,7 +428,7 @@ spring.datasource.hikari.max-lifetime=1800000
 spring.datasource.hikari.leak-detection-threshold=0
 ```
 
-## Monitoring Hikari
+## Monitoring Hikari and springboot
 
 ### Implementation in gradle
 ``` groovy
@@ -449,16 +450,45 @@ management.endpoints.web.exposure.include=health,refresh,info,prometheus
 management.endpoint.prometheus.enabled=true
 ```
 
-### Aad file prometheus.yml
+### Add file prometheus.yml for docker
 
 ``` yml
 scrape_configs:
-- job_name: 'dynamic-database-access'
-  metrics_path: '/actuator/prometheus'
-  scrape_interval: 5s
-  static_configs:
-    - targets: ['localhost:8080']
+  - job_name: 'dynamic-database-access'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['host.docker.internal:8080']
 ```
+
+## Grafana
+
+``` groovy
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./src/main/resources/prometheus.yml:/etc/prometheus/prometheus.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Allows Prometheus to talk to Spring Boot on your host machine
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+```
+
 
 ### Links prometeus
 > [Raw prometheus](http://localhost:8080/actuator/prometheus)
@@ -480,3 +510,19 @@ scrape_configs:
 [refresh](http://localhost:8080/actuator/refresh)
 
 
+## Docker setup docker network
+docker network create app-net 2>/dev/null || true
+
+### check if docker network is active
+docker network ls --filter "name=^app-net$"
+
+### Test TCP Reachability from Spring Boot to PostgreSQL
+docker exec dynamic-database-access sh -c "getent hosts postgres-db && (echo > /dev/tcp/postgres-db/5432) 2>/dev/null && echo 'Reachable on 5432'"
+
+### Check if both are attached on same network
+mgerrit2@MSI:~/dev-ubuntu/software-projects-ubuntu/dynamic-database-access$ docker network inspect app-net --format '{{range .Containers}}{{.Name}} {{end}}'
+postgres-db dynamic-database-access 
+
+### check if there are tables
+mgerrit2@MSI:~/dev-ubuntu/software-projects-ubuntu/dynamic-database-access$ docker exec -i postgres-db psql -U user -d gscience-security-dev -c "\dt"
+Did not find any tables.
