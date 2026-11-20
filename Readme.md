@@ -456,12 +456,6 @@ services:
       - prometheus
 ```
 
-
-### Links prometeus
-> [Raw prometheus](http://localhost:8080/actuator/prometheus)
->
-> [Prometheus UI](http://localhost:9090)
-
 ## Grafana
 ### Grafana UI
 [Grafana UI](http://localhost:3000)
