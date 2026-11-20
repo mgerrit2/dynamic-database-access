@@ -428,39 +428,6 @@ spring.datasource.hikari.max-lifetime=1800000
 spring.datasource.hikari.leak-detection-threshold=0
 ```
 
-## Monitoring Hikari and springboot
-
-### Implementation in gradle
-``` groovy
-// Micrometer Prometheus use for monitoring
-implementation 'io.micrometer:micrometer-registry-prometheus'
-```
-
-### Settings in de properties file
-``` properties
-#######################################################################
-# actuators
-#######################################################################
-# Expose health,refresh and prometheus endpoints over web
-management.endpoints.web.exposure.include=health,refresh,info,prometheus
-
-#######################################################################
-# prometheus
-##################################################################
-management.endpoint.prometheus.enabled=true
-```
-
-### Add file prometheus.yml for docker
-
-``` yml
-scrape_configs:
-  - job_name: 'dynamic-database-access'
-    metrics_path: '/actuator/prometheus'
-    scrape_interval: 5s
-    static_configs:
-      - targets: ['host.docker.internal:8080']
-```
-
 ## Grafana
 
 ``` groovy
