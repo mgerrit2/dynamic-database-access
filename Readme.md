@@ -428,38 +428,6 @@ spring.datasource.hikari.max-lifetime=1800000
 spring.datasource.hikari.leak-detection-threshold=0
 ```
 
-## Grafana
-
-``` groovy
-version: '3.8'
-
-services:
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./src/main/resources/prometheus.yml:/etc/prometheus/prometheus.yml
-    extra_hosts:
-      - "host.docker.internal:host-gateway" # Allows Prometheus to talk to Spring Boot on your host machine
-
-  grafana:
-    image: grafana/grafana-oss:latest
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    depends_on:
-      - prometheus
-```
-
-## Grafana
-### Grafana UI
-[Grafana UI](http://localhost:3000)
- 
 ## Swagger
 [swagger](http://localhost:8080/swagger-ui/index.html)
 
