@@ -5,8 +5,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 
@@ -25,15 +28,17 @@ public class PropertyReaderWriter {
      * Reads a specific property value from the given properties file.
      *
      * @param property       the key of the property to look up
-     * @param propertieFile  the path/name of the properties file relative to the classpath (e.g., "application.properties")
+     * @param propertiesFile  the path/name of the properties file relative to the classpath (e.g., "application.properties")
      * @return the value associated with the property key, or {@code null} if the key does not exist
      * @throws IOException if the resource cannot be found, opened, or read
      */
-    public String readProperty(String property,String propertieFile) throws IOException {
-        Resource resource = ctx.getResource("classpath:"+propertieFile);
+    public String readProperty(String property,String propertiesFile) throws IOException {
+        Resource resource = ctx.getResource("classpath:" + propertiesFile);
 
         Properties appProps = new Properties();
-        appProps.load(resource.getInputStream());
+        try (InputStream in = resource.getInputStream()) {
+            appProps.load(in);
+        }
 
         return appProps.getProperty(property);
     }
@@ -46,16 +51,25 @@ public class PropertyReaderWriter {
      *
      * @param property       the key of the property to set
      * @param propertyValue  the value to assign to the property
-     * @param propertieFile  the path/name of the properties file relative to the classpath (e.g., "application.properties")
+     * @param propertiesFile  the path/name of the properties file relative to the classpath (e.g., "application.properties")
      * @throws IOException if the resource cannot be found, written to, or if the file cannot be accessed as a writable file on disk
      */
-    public void writeProperty(String property,String propertyValue,String propertieFile) throws IOException {
-        Resource resource = ctx.getResource("classpath:"+propertieFile);
+    public void writeProperty(String property,String propertyValue,String propertiesFile) throws IOException {
+        Resource resource = ctx.getResource("classpath:" + propertiesFile);
+        Path targetPath = resource.getFile().toPath();
 
         Properties appProps = new Properties();
-        appProps.setProperty(property,propertyValue);
+        if (Files.exists(targetPath)) {
+            try (InputStream in = Files.newInputStream(targetPath)) {
+                appProps.load(in);
+            }
+        }
 
-        appProps.store(new FileWriter(resource.getFile()), "store to properties file");
+        appProps.setProperty(property, propertyValue);
+
+        try (OutputStream out = Files.newOutputStream(targetPath)) {
+            appProps.store(out, "store to properties file");
+        }
     }
 
 }
